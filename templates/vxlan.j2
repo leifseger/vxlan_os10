@@ -1,0 +1,108 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+{###########################################
+
+Purpose:
+Configure vxlan commands for dellos10 Devices
+
+vxlan:
+vxlan:
+  nve: loopback1
+  asn: 64625
+  evpn: auto-evi
+  neighbor:
+    - ip: 1.2.3.9
+      remote_asn: 6669
+    - ip: 1.2.3.4
+      remote_asn: 6666
+  virtual_network:
+    - vn_id: 101
+      vxlan_tag: 101101
+      vlti_vlan: 3101
+#      vlti_vlan_state: absent
+      member_interface:
+        - interface: ethernet 1/1/19 vlan-tag 200 # or "vlan xxx"
+          state: absent
+#          vlan: 400
+#          vlan_state:
+    - vn_id: 102
+      vxlan_tag: 101102
+#      vxlan_tag_state: absent
+      vlti_vlan: 3102
+      member_interface:
+        - vlan: 400
+          vlan_state: absent
+		  
+################################}
+{% if vxlan is defined and vxlan %}
+{% set vxlan_vars = vxlan %}
+evpn
+  {{ vxlan_vars.evpn }}
+router bgp {{ vxlan_vars.asn }}
+
+  {% if vxlan_vars.neighbor is defined and vxlan_vars.neighbor %}
+    {% for neighbor in vxlan_vars.neighbor %}
+  neighbor {{ neighbor.ip }}
+  remote-as {{ neighbor.remote_asn }}
+  address-family l2vpn evpn
+    activate
+  address-family ipv4 unicast
+    no activate
+    {% endfor %}
+  {% endif %}
+
+
+nve
+ source-interface {{ vxlan_vars.nve }}
+
+    {% for virtual_network in vxlan_vars.virtual_network %}
+          {% if virtual_network.vn_id is defined and virtual_network.vn_id %}
+              {% if virtual_network.state is defined and virtual_network.state == "absent" %}
+ no virtual-network {{ virtual_network.vn_id }}
+              {% else %}
+virtual-network {{ virtual_network.vn_id }}
+
+          {% if virtual_network.vlti_vlan is defined and virtual_network.vlti_vlan %}
+                  {% if virtual_network.vlti_vlan_state is defined and virtual_network.vlti_vlan_state == "absent" %}
+  no vlti-vlan
+                  {% else %}
+  vlti-vlan {{ virtual_network.vlti_vlan }}
+                  {% endif %}
+          {% endif %}
+                {% if virtual_network.vxlan_tag is defined and virtual_network.vxlan_tag %}
+                  {% if virtual_network.vxlan_tag_state is defined and virtual_network.vxlan_tag_state == "absent" %}
+  no vxlan-vni {{ virtual_network.vxlan_tag }}
+                  {% else %}
+  vxlan-vni {{ virtual_network.vxlan_tag }}
+                  {% endif %}
+                {% endif %}
+                {% if virtual_network.member_interface is defined and virtual_network.member_interface %}
+                 {% for inter_type in virtual_network.member_interface %}
+                  {% if inter_type.interface is defined and inter_type.interface %}
+                   {% if inter_type.state is defined and inter_type.state == "absent" %}
+  no member-interface {{ inter_type.interface }}
+                   {% else %}
+  member-interface {{ inter_type.interface }}
+                   {% endif %}
+                  {% endif %}
+
+                  {% if inter_type.vlan is defined and inter_type.vlan %}
+                   {% if inter_type.vlan_state is defined and inter_type.vlan_state == "absent" %}
+
+interface vlan {{ inter_type.vlan }}
+  no virtual-network
+                   {% else %}
+interface vlan {{ inter_type.vlan }}
+  virtual-network {{ virtual_network.vn_id }}
+                   {% endif %}
+                  {% endif %}
+
+
+                 {% endfor %}
+                {% endif %}
+
+
+
+              {% endif %}
+          {% endif %}
+    {% endfor %}
+{% endif %}
