@@ -1,5 +1,5 @@
 ---
-# tasks file for Dell-Networking.dellos-interface
+# tasks file for vxlan
 
  - name: "Generating interface configuration for dellos10"
    template:
