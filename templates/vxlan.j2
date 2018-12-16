@@ -5,7 +5,6 @@ Purpose:
 Configure vxlan commands for dellos10 Devices
 
 vxlan:
-vxlan:
   nve: loopback1
   asn: 64625
   evpn: auto-evi
@@ -34,8 +33,8 @@ vxlan:
           vlan_state: absent
 		  
 ################################}
-{% if vxlan is defined and vxlan %}
-{% set vxlan_vars = vxlan_os10 %}
+{% if vxlan_os10 is defined and vxlan_os10 %}
+{% set vxlan_vars = vxlan %}
 evpn
   {{ vxlan_vars.evpn }}
 router bgp {{ vxlan_vars.asn }}
