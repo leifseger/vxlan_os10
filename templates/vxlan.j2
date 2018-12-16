@@ -34,7 +34,7 @@ vxlan:
 		  
 ################################}
 {% if vxlan is defined and vxlan %}
-{% set vxlan_vars = vxlan %}
+{% set vxlan_vars = vxlan_os10 %}
 evpn
   {{ vxlan_vars.evpn }}
 router bgp {{ vxlan_vars.asn }}
