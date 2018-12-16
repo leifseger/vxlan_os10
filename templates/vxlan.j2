@@ -23,9 +23,10 @@ vxlan:
         - interface: ethernet 1/1/19 vlan-tag 200 # or "vlan xxx"
           state: absent
 #          vlan: 400
-#          vlan_state:
+#          vlan_state: absent
     - vn_id: 102
       vxlan_tag: 101102
+      state: absent
 #      vxlan_tag_state: absent
       vlti_vlan: 3102
       member_interface:
