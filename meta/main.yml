@@ -8,8 +8,8 @@ galaxy_info:
   - name: Dell OS10
 
   galaxy_tags:
-    - Networking
-    - Dell
-    - EMC
-    - DellEMC
-    - OS10
+    - networking
+    - dell
+    - emc
+    - dellemc
+    - os10
