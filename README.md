@@ -5,9 +5,6 @@ This is a very basic role to configure BGP EVPN VXLAN on DellEMC OS10.4
 Installation
 ------------ 
 ansible-galaxy install leifseger.vxlan_os10
-Role variables
---------------
-
 
 Example playbook
 ----------------
