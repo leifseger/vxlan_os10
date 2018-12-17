@@ -26,6 +26,7 @@ Example playbook
 		  state: absent # anything else than absent means present
 		- ip: 1.2.3.4
 		  remote_asn: 6666
+		  update_source: loopback1
 	  virtual_network:
 		- vn_id: 101
 		  vxlan_tag: 101101
