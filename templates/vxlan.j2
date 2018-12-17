@@ -13,6 +13,7 @@ vxlan:
       remote_asn: 6669
     - ip: 1.2.3.4
       remote_asn: 6666
+      update-source: loopback1
   virtual_network:
     - vn_id: 101
       vxlan_tag: 101101
@@ -46,6 +47,10 @@ router bgp {{ vxlan_vars.asn }}
      {% else %}
   neighbor {{ neighbor.ip }}
   remote-as {{ neighbor.remote_asn }}
+  send-community extended
+  no shutdown
+  ebgp-multihop 3
+  update-source {{ neighbor.update_source }}
   address-family l2vpn evpn
     activate
   address-family ipv4 unicast
