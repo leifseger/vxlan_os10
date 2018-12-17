@@ -41,12 +41,16 @@ router bgp {{ vxlan_vars.asn }}
 
   {% if vxlan_vars.neighbor is defined and vxlan_vars.neighbor %}
     {% for neighbor in vxlan_vars.neighbor %}
+     {% if neighbor.state is defined and neighbor.state == 'absent' %}
+  no neighbor {{ neighbor.ip }}
+     {% else %}
   neighbor {{ neighbor.ip }}
   remote-as {{ neighbor.remote_asn }}
   address-family l2vpn evpn
     activate
   address-family ipv4 unicast
     no activate
+     {% endif %}
     {% endfor %}
   {% endif %}
 
